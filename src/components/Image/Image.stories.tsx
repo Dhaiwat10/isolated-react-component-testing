@@ -18,7 +18,7 @@ const Template: Story<ImageProps> = args => <Image {...args} />;
 export const Primary = Template.bind({});
 Primary.args = {
   src: photoSrc,
-  alt: '#'
+  alt: 'Sample alt text'
 };
 
 export const Src404 = Template.bind({});
