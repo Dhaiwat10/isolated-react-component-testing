@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import { Image } from './';
+import { fallbackSrc, photoSrc } from '../../constants';
 
-const imgSrc = 'https://memegenerator.net/img/instances/50262258.jpg';
-const altText = 'this is literally a meme';
-const fallbackSrc =
-  'https://www.androidpolice.com/wp-content/uploads/2018/11/chrome-dino-hero.png';
+const altText = 'abcd';
 
 describe('Image', () => {
   it('should render the image properly', async () => {
-    const { getByAltText } = render(<Image src={imgSrc} alt={altText} />);
+    const { getByAltText } = render(<Image src={photoSrc} alt={altText} />);
 
-    const image = getByAltText(altText);
+    const image = getByAltText(altText) as HTMLImageElement;
+
+    fireEvent.load(image);
 
     expect(image).toBeTruthy();
   });
@@ -20,21 +20,24 @@ describe('Image', () => {
   it('should apply the provided height', async () => {
     const height = '200px';
     const { getByAltText } = render(
-      <Image src={imgSrc} alt={altText} height={height} />
+      <Image src={photoSrc} alt={altText} height={height} />
     );
 
     const image = getByAltText(altText);
+
+    fireEvent.load(image);
 
     expect(image.style.height).toEqual(height);
   });
 
   it('should handle errors and render the fallback', async () => {
+    jest.setTimeout(15000);
     const { getByAltText } = render(<Image src="#" alt={altText} />);
 
     const image = getByAltText(altText) as HTMLImageElement;
 
-    setTimeout(() => {
-      expect(image.src).toEqual(fallbackSrc);
-    }, 1000);
+    fireEvent.error(image);
+
+    expect(image.src).toEqual(fallbackSrc);
   });
 });
